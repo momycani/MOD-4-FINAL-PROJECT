@@ -59,8 +59,8 @@ a:hover{
 }
 
 .nav__logo--img{
-    width: 48px;
-    height: 48px;
+    width: 75px;
+    height: 75px;
 }
 
 .nav__logo--title{
@@ -111,7 +111,7 @@ li{
 }
 
 .nav__link--primary:hover{
-    background-color: rgb(93, 62, 255);
+    background-color: orange;
 }
 
 .btn__menu{
@@ -119,7 +119,7 @@ li{
     background-color: transparent;
     border: none;
     font-size: 32px;
-    color: #7342d6;  
+    color: orange;  
     text-align: center;  
 }
 
@@ -173,6 +173,29 @@ li{
     color: white;
 }
 
+/* HEADER */
+header {
+  height: calc(100vh - 80px);
+}
+
+.header__container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.header__description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header__img--wrapper {
+  padding: 20px;
 
 
 /* FOOTER */
@@ -194,8 +217,8 @@ footer {
     align-items: center;
 }
 .footer__logo--img {
-    width: 75px;
-    height: 75px;
+    width: 100px;
+    height: 100px;
     
 }
 .footer__social--list {
