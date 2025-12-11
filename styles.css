@@ -17,6 +17,58 @@ body{
     overflow-x: hidden;
 }
 
+nav {
+    height: 80px;
+}
+
+img{
+    width: 100%;
+}
+
+p{
+    line-height: 1.5;
+}
+
+a{
+    text-decoration: none;
+}
+
+h1{
+    font-size: 56px;
+    font-weight: 300;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+h2{
+    font-size: 32px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.peru{
+    color: peru;
+    font-weight: bold;
+}
+
+button{
+    cursor: pointer;
+}
+
+.btn{
+    background-color: peru;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 16px 32px;
+    font-size: 20px;
+    font-weight: 500;
+    transition: 300ms ease;
+}
+.btn:hover{
+    background-color: orange;
+}
+
 .container{
     padding: 92px 0;
 }
@@ -26,10 +78,6 @@ body{
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 32px;
-}
-
-.img{
-    width: 100%;
 }
 
 a{
@@ -46,6 +94,12 @@ a:hover{
 }
 
 /* LANDING */
+
+.nav__container{
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
 .nav__row{
     margin: 16px 36px;
@@ -174,6 +228,7 @@ li{
 }
 
 /* HEADER */
+
 header {
   height: calc(100vh - 80px);
 }
@@ -185,7 +240,8 @@ header {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 32px;
 }
 
 .header__description {
@@ -196,7 +252,70 @@ header {
 
 .header__img--wrapper {
   padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;  
+  height: auto;
 }
+
+/* HOLIDAY */
+
+#holiday {
+  padding-top: 8vw;
+  background-color: #ffe9df;
+}
+
+.movies {
+  display: flex;
+  flex-wrap: wrap;  
+}
+
+.movie {
+  width: 100%;
+  padding: 24px;
+}
+
+.movie__img--wrapper {
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  overflow: hidden;    
+}
+
+.movie__img {
+  width: 25%;
+  height: auto;
+  max-width: 100%;
+  transition: all 300ms ease;
+  cursor: not-allowed;
+  object-fit: contain;
+  object-position: left;
+}
+
+.movie:hover .movie__img {
+  transform: scale(1.03);
+}
+
+.movie__title {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.movie__title:hover {
+  text-decoration: underline;
+  cursor: not-allowed;
+}
+
+.movie__ratings {
+  margin-bottom: 8px;
+  color: #fabf2a;
+}
+
+.movie__price--purchase{
+  padding-right: 6px;
+  color: coral;
+}
+
 
 /* 
 
