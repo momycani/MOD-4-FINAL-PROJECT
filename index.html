@@ -19,20 +19,15 @@
                </div>
                     <div class="nav__links">
                      <a href="#" class="nav__link">About</a>
-                     <a href="#" class="nav__link">Pricing</a>
                      <a href="#" class="nav__link">Contact Us</a>
-                     <a href="#" class="nav__link">Login</a>
                      <a href="#" class="nav__link nav__link--primary">Sign Up</a>
                     </div>
                     <button class="btn__menu" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
                     <div class="menu__backdrop">
                         <button class="btn__menu btn__menu--close" onclick="closeMenu()"><i class="fa-solid fa-times"></i></button>
                         <ul class="menu__links">
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">About</a></li>
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">Blog</a></li>
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">Pricing</a></li>
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">Conact Us</a></li>
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">Login</a></li>
+                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">About</a></li>                            
+                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">Conact Us</a></li>                           
                             <li class="menu__list"><a href="#" class="menu__link menu__link--primary" onclick="closeMenu()">Sign Up</a></li>
                         </ul>
                     </div>
@@ -59,32 +54,23 @@
 
 </body>
 
-<footer>
-        <div class="container footer__container">
-            <div class="row footer__row">
-                <a href="#" class="footer__anchor"></a>
-                <figure class="footer__logo">
-                    <img src="assets/logo-no-background.png" class="footer__logo--img" alt="">
-                </figure>
-                <div class="footer__social--list">
-                    <a href="https://github.com/dashboard/" target="_blank" class="footer__social--link
-                    link__hover-effect
-                    link__hover-effect--white click">
-                        Github
-                    </a>
-                    <a href="https://www.linkedin.com/in/elizabeth-kenward-4b123023a/" target="_blank" class="footer__social--link 
-                    link__hover-effect
-                    link__hover-effect--white click">
-                        LinkedIn
-                    </a>
-                    <a href="#" onclick="toggleModal()" class="footer__social--link 
-                    link__hover-effect
-                    link__hover-effect--white click">
-                        Contact 
-                    </a>
-                </div>
-                <p class="footer__copyright">Copyright © 2025  Beth Coleman Kenward</p>
-            </div>
+  <footer>
+    <div class="container">
+      <div class="row row__column">
+        <a href="#">
+          <figure class="footer__logo">
+            <img src="assets/logo-no-background.png" class="footer__logo--img" alt="">
+          </figure>
+        </a>
+        <div class="footer__list">
+          <a href="#" class="footer__link">Home</a>
+          <a class="footer__link no-cursor">About</a>
+          <a href="#features" class="footer__link">Movies</a>
+          <a class="footer__link no-cursor">Contact</a>
         </div>
-    </footer>
+        <div class="footer__copyright">Copyright &copy; 2025 Beth Coleman Kenward</div>
+      </div>
+    </div>
+  </footer>
+
 </html>
