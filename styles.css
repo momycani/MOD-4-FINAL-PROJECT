@@ -75,7 +75,7 @@ button:active{
 }
 
 .container{
-    padding: 92px 0;
+    padding: 72px 0;
 }
 
 .row{
@@ -292,13 +292,17 @@ header {
 
 /* MOVIES */
 
+#features{
+    overflow: hidden;
+}
+
 #holiday {
-  background-color: #ffe9df;
+  background-color: #fff5ee;
   overflow: hidden;
 }
 
 #action {
-   background-color: #ffe9df;
+   background-color: #fff5ee;
 }
 
 .movies {
@@ -360,18 +364,18 @@ FOOTER
 
 footer {
   background-color: white;
-  padding: 40px 0;
   text-align: center;
 }
 
 .footer__logo {
   display: flex;
-    justify-content: center;
+  justify-content: center;
+  padding-bottom: 36px;
 }
 
 .footer__logo--img {
-  width: 75px;
-  height: 75px;  
+  width: 100px;
+  height: 100px;  
 }
 
 .footer__link,
