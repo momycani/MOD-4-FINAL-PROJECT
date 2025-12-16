@@ -19,17 +19,17 @@
                     <div class="nav__logo--title"></div>
                </div>
                     <div class="nav__links">
-                     <a href="#" class="nav__link">About</a>
-                     <a href="#" class="nav__link">Contact Us</a>
-                     <a href="#" class="nav__link nav__link--primary">Sign Up</a>
+                     <a href="#" class="nav__link no-cursor">About</a>
+                     <a href="#" class="nav__link no-cursor">Contact Us</a>
+                     <a href="#" class="nav__link nav__link--primary no-cursor">Sign Up</a>
                     </div>
                     <button class="btn__menu" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
                     <div class="menu__backdrop">
                         <button class="btn__menu btn__menu--close" onclick="closeMenu()"><i class="fa-solid fa-times"></i></button>
                         <ul class="menu__links">
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">About</a></li>                            
-                            <li class="menu__list"><a href="#" class="menu__link" onclick="closeMenu()">Conact Us</a></li>                           
-                            <li class="menu__list"><a href="#" class="menu__link menu__link--primary" onclick="closeMenu()">Sign Up</a></li>
+                            <li class="menu__list"><a href="#" class="menu__link no-cursor" onclick="closeMenu()">About</a></li>                            
+                            <li class="menu__list"><a href="#" class="menu__link no-cursor" onclick="closeMenu()">Conact Us</a></li>                           
+                            <li class="menu__list"><a href="#" class="menu__link menu__link--primary no-cursor" onclick="closeMenu()">Sign In</a></li>
                         </ul>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
         <div class="header__description">
           <h1>America's <span class="peru">top</span> choice for movie reviews, purchase, and rentals.</h1>
           <h2>Discover a movie that matches your <span class="peru hover-wiggle">vibe.</span></h2>
-          <a href="#features">
+          <a href="movies.html" target="_blank">
             <button class="btn">Browse movies</button>
           </a>
         </div>
@@ -305,10 +305,17 @@
         </div>
       </div>
     </section>
+<section id="browse-movies-cta">
+  <div class="container browse-movies-cta">
+    <a href="movies.html" target="_blank">
+            <button class="btn">Browse movies</button>
+          </a>
+          </div>
 </section>
+  </section>
 
   <footer>
-    <div class="container">
+    <div class="container footer__container">
       <div class="row row__column">
         <a href="#">
           <figure class="footer__logo">

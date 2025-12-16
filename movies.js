@@ -226,5 +226,5 @@ const actionMovies =
 "Type": "movie",
 "Poster": "https://m.media-amazon.com/images/M/MV5BZjQwNjUxZjUtYmUxOS00YmRjLTljZTgtMTc0OTFlZDllZjM5XkEyXkFqcGc@._V1_SX300.jpg"
 }
-],
+]
 }

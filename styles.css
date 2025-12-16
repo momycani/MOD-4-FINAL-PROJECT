@@ -75,7 +75,7 @@ button:active{
 }
 
 .container{
-    padding: 72px 0;
+    padding: 56px 0;
 }
 
 .row{
@@ -315,20 +315,22 @@ header {
   padding: 24px;
 }
 
+.movie__img--wrapper {
+  height: 300px;
+  width: 100%;
+  margin-bottom: 8px;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;    
+}
+
 .movie__img {
   height: 300px;
   max-width: 100%;
   transition: all 300ms ease;
   cursor: not-allowed;
   object-fit: cover;
-  object-position: left;
-}
-
-.movie__img--wrapper {
-  margin-bottom: 8px;
-  display: flex;
-  border-radius: 4px;
-  overflow: hidden;    
+  object-position: center;
 }
 
 .movie:hover .movie__img {
@@ -355,6 +357,11 @@ header {
   color: coral;
 }
 
+.browse-movies-cta {
+  text-align: center;
+  padding: 24px;
+  margin-bottom: 8px;
+}
 
 /* 
 
@@ -365,6 +372,12 @@ FOOTER
 footer {
   background-color: white;
   text-align: center;
+}
+
+.footer__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0;
 }
 
 .footer__logo {
@@ -381,7 +394,9 @@ footer {
 .footer__link,
 .footer__copyright {
   color: black;
-  font-size: 16px;}
+  font-size: 16px;
+  padding-bottom: 16px;
+}
 
 .footer__list {
   margin: 20px 0 24px 0;
@@ -390,9 +405,6 @@ footer {
 .footer__link {
   padding: 0 8px;
 }
-
-/* 
-
 
 /* SMALL PHONES, TABLETS, LARGE SMARTPHONES */
 @media (max-width: 768px) {
@@ -419,26 +431,65 @@ footer {
         text-align: center;
         padding: 0 24px;
     }
+    .movie{
+       width: 50%;      
+    }
+
+    .movie__img{
+        height: auto;
+        object-fit: contain;
+        transform: none;
+    }
+
+    .movie__img--wrapper{
+        height: 240px;
+        overflow: visible;
+    }
+   
+    .browse-movies-cta {
+        margin-bottom: 8px;
+        margin-top: 20px;
+        padding: 16px;
+    }
 }
 
 /* SMALL PHONES, LARGE SMARTPHONES */
 @media (max-width: 550px){
+     
         .btn__menu{
             display: block;            
         }   
+
         .nav__links{
             display: none;
         }
+
         .header__description{
             width: 100%;
             text-align: center;
             padding: 0 16px;
         }
+
+        h1{
+            font-size: 46px;
+        }
+
+        h2{
+            font-size: 24px;
+        }
+
         .header__img--wrapper{
             justify-content: center;
             padding: 0;
         }
+
         .header__img{
             width: 100%;
         }
-}
+
+        .browse-movies-cta {
+            margin-bottom: 8px;
+            margin-top: 20px;
+            padding: 16px;
+        }
+    }
