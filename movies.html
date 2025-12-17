@@ -8,8 +8,8 @@
   <title>MODULE 4 FINAL PROJECT</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://kit.fontawesome.com/46158079ac.js" crossorigin="anonymous"></script>
-  <script src="script.js"></script>
-  <script src="movies.js"></script>
+  <script src="script.js" defer></script>
+  <script src="movies.js" defer></script>
 </head>
 
 <body id="movies__body">
@@ -34,7 +34,7 @@
               <a href="#" class="menu__link" onclick="closeMenu()">Home</a>
             </li>
             <li class="menu__list">
-              <a href="#features" class="menu__link" onclick="closeMenu()">Books</a>
+              <a href="#features" class="menu__link" onclick="closeMenu()">Movies</a>
             </li>
             <li class="menu__list">
               <a class="menu__link no-cursor" onclick="closeMenu()">Contacts</a>
@@ -49,9 +49,9 @@
     <section>
       <div class="container">
         <div class="row">
-          <div class="books__header">         
+          <div class="movies__header">         
           <h2 class="section__title movies__header--title">
-            All <span class="purple">Books</span>
+            All <span class="purple">Movies</span>
           </h2>
           <select id="filter" onchange="filterMovies(event)">
             <option value="" disabled selected>Sort</option>
@@ -63,10 +63,9 @@
             <option value="RATING">Rating</option>
           </select>
            </div>
-          <div class="books">
-            <i class="fa-solid fa-spinner movies__loading--spinner"></i>
-
-          </div>
+          <div class="movies">
+            <i class="fa-solid fa-spinner movies__loading--spinner"></i>            
+            </div>
         </div>
       </div>
     </section>
