@@ -406,6 +406,40 @@ footer {
   padding: 0 8px;
 }
 
+/* MOVIES */
+
+#movies__body{
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    min-height: 100vh;
+}
+
+.nav__container--movies{
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#movies__main{
+    padding-top: 0;
+}
+
+.movies__header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+
+/* MEDIA QUERIES */
+
 /* SMALL PHONES, TABLETS, LARGE SMARTPHONES */
 @media (max-width: 768px) {
     .nav__row{

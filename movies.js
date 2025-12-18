@@ -1,3 +1,192 @@
+const API_KEY = 'fca438ff';
+
+let allMoviesData = null; 
+let currentMovies = [];
+
+
+async function fetchMovies() {
+    const urls = [
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=christmas`,
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=family`,
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=action`
+    ];
+    const response = await Promise.all(
+        urls.map(url => fetch(url))
+    );
+
+    const data = await Promise.all(
+        response.map(res => res.json())
+    );
+    const allMovies = {
+        christmasMovies: data[0].Search || [],
+        familyMovies: data[1].Search || [],
+        actionMovies: data[2].Search || []
+    };
+
+    return allMovies;
+}
+
+const moviesContainer = document.querySelector(".movies");
+
+function renderMovies(movies) {
+  moviesContainer.innerHTML = movies
+    .map(movie => {
+     const meta = movieMeta[movie.imdbID] || {};
+      const group = meta.priceGroup || DEFAULT_PRICE_GROUP;
+      const prices = PRICE_GROUPS[group];
+
+      const poster =
+        movie.Poster && movie.Poster !== "N/A"
+          ? movie.Poster
+          : "assets/no-image.png";
+          
+      return `
+      <div class="movie" data-imdbid="${movie.imdbID}">
+        <figure class="movie__img--wrapper">
+          <img 
+            class="movie__img"
+            src="${poster}"
+            alt="${movie.Title}"
+          />
+        </figure>
+        <h3 class="movie__title">${movie.Title}</h3>
+      <div class="movie__prices">
+            <span>Rent: $${prices.rent}</span>
+            <span class="movie__price--purchase">Purchase: $${prices.purchase}</span>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+async function openMovieModal(imdbID) {
+  const res = await fetch(
+    `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
+  );
+  const movie = await res.json();
+
+  }
+
+async function init() {
+  allMoviesData = await fetchMovies();
+  initializeMovies();  
+}
+
+init();
+
+function initializeMovies(filter) {
+    if (!allMoviesData) return;
+
+    currentMovies = [
+      ...allMoviesData.christmasMovies,
+      ...allMoviesData.familyMovies,
+      ...allMoviesData.actionMovies
+    ];
+    renderMovies(currentMovies);    
+    }
+
+moviesContainer.addEventListener("click", (event) => {
+  const movieElement = event.target.closest(".movie"); 
+  if (!movieElement) return;
+
+  const imdbID = movieElement.getAttribute("data-imdbid"); 
+  openMovieModal(imdbID);
+});
+
+function filterMovies(event) {
+  const value = event.target.value;
+  initializeMovies(value);
+
+  if (value === "LOW_TO_HIGH" || value === "HIGH_TO_LOW") {
+    sortByPrice(value);
+    return;
+  }
+
+  if (value === "A_to_Z") {
+    sortAZ();
+    return;
+  }
+}
+
+
+function priceHTML(purchasePrice, rentPrice) {
+  if (!rentPrice) {
+    return `$${purchasePrice.toFixed(2)}`;
+  } else {
+    return `<span class="movie__price--purchase">$${purchasePrice.toFixed(2)}</span>$${rentPrice.toFixed(2)}`;
+  }
+}
+
+const PRICE_GROUPS = {
+  LOW:    { rent: "3.95", purchase: "18.95" },
+  MEDIUM: { rent: "4.95", purchase: "19.95" },
+  HIGH:   { rent: "5.95", purchase: "20.95" },
+  PREMIUM:{ rent: "6.95", purchase: "21.95" }
+};
+
+const movieMeta = {
+  tt0107688: { priceGroup: "MEDIUM" },
+  tt1711525: { priceGroup: "MEDIUM" },
+  tt8623904: { priceGroup: "MEDIUM" },
+  tt2990140: { priceGroup: "HIGH" },
+  tt0097958: { priceGroup: "PREMIUM" },
+  tt1268799: { priceGroup: "LOW" },
+  tt0170016: { priceGroup: "LOW" },
+  tt0085334: { priceGroup: "LOW" },
+  tt0104940: { priceGroup: "LOW" },
+  tt1067106: { priceGroup: "LOW" },
+
+  tt1442437: { priceGroup: "PREMIUM" },
+  tt9544034: { priceGroup: "MEDIUM" },
+  tt7401588: { priceGroup: "MEDIUM" },
+  tt0356680: { priceGroup: "MEDIUM" },
+  tt0182576: { priceGroup: "MEDIUM" },
+  tt6513120: { priceGroup: "LOW" },
+  tt2404311: { priceGroup: "HIGH" },
+  tt0218967: { priceGroup: "HIGH" },
+  tt0106220: { priceGroup: "HIGH" },
+  tt0101272: { priceGroup: "HIGH" },
+
+  tt0107362: { priceGroup: "HIGH" },
+  tt13423846: { priceGroup: "PREMIUM" },
+  tt21191806: { priceGroup: "MEDIUM" },
+  tt15600222: { priceGroup: "MEDIUM" },
+  tt6495770: { priceGroup: "MEDIUM" },
+  tt0087727: { priceGroup: "LOW" },
+  tt0089604: { priceGroup: "LOW" },
+  tt0094612: { priceGroup: "LOW" },
+  tt0120633: { priceGroup: "LOW" },
+  tt0318155: { priceGroup: "LOW" }
+};
+
+function sortByPrice(order) {
+  const sorted = [...currentMovies].sort((a, b) => {
+    const metaA = movieMeta[a.imdbID] || {};
+    const metaB = movieMeta[b.imdbID] || {};
+
+    const priceA = Number(PRICE_GROUPS[metaA.priceGroup]?.purchase);
+    const priceB = Number(PRICE_GROUPS[metaB.priceGroup]?.purchase);
+
+    return order === "LOW_TO_HIGH"
+      ? priceA - priceB
+      : priceB - priceA;
+  });
+
+  renderMovies(sorted);
+}
+
+function sortAZ() {
+  const sorted = [...currentMovies].sort((a, b) =>
+    a.Title.localeCompare(b.Title)
+  );
+
+  renderMovies(sorted);
+}
+
+
+/* CHRISTMAS */
+
 //  https://www.omdbapi.com/?i=tt3896198&apikey=fca438ff&s=christmas
 //  https://www.omdbapi.com/?i=tt3896198&apikey=fca438ff&s=family
 //  https://www.omdbapi.com/?i=tt3896198&apikey=fca438ff&s=action
@@ -226,72 +415,3 @@ const actionMovies = [
 // }
 ];
 
-const allMovies = { christmasMovies, familyMovies, actionMovies };
-
-const API_KEY = 'fca438ff';
-
-async function fetchMovies() {
-    const urls = [
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=christmas`,
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=family`,
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=action`
-    ];
-    const response = await Promise.all(
-        urls.map(url => fetch(url))
-    );
-
-    const data = await Promise.all(
-        response.map(res => res.json())
-    );
-    const allMovies = {
-        christmasMovies: data[0].Search || [],
-        familyMovies: data[1].Search || [],
-        actionMovies: data[2].Search || []
-    };
-
-    return allMovies;
-}
-
-fetchMovies().then(allMovies => {
-  console.log(allMovies.christmasMovies);
-  console.log(allMovies.familyMovies);
-  console.log(allMovies.actionMovies);
-});
-
-const moviesContainer = document.querySelector(".movies");
-
-function renderMovies(movies) {
-  moviesContainer.innerHTML = movies
-    .map(movie => `
-      <div class="movie">
-        <figure class="movie__img--wrapper">
-          <img 
-            class="movie__img"
-            src="${movie.Poster !== "N/A" ? movie.Poster : "assets/no-image.png"}"
-            alt="${movie.Title}"
-          />
-        </figure>
-        <h3 class="movie__title">${movie.Title}</h3>
-      </div>
-    `)
-    .join("");
-}
-
-fetchMovies().then(allMovies => {
-  const combinedMovies = [
-    ...allMovies.christmasMovies,
-    ...allMovies.familyMovies,
-    ...allMovies.actionMovies
-  ];
-
-  renderMovies(combinedMovies);
-});
-
-async function openMovieModal(imdbID) {
-  const res = await fetch(
-    `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
-  );
-  const movie = await res.json();
-
-  console.log(movie); // use in modal
-}

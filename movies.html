@@ -15,7 +15,7 @@
 <body id="movies__body">
   <section>
     <nav>
-      <div class="nav__container">
+      <div class="nav__container--movies">
         <img class="nav__logo--img rock" src="assets/logo-no-background.png" alt="">
         <ul class="nav__links">
           <li><a href="#" class="nav__link">Home</a></li>
@@ -51,18 +51,15 @@
         <div class="row">
           <div class="movies__header">         
           <h2 class="section__title movies__header--title">
-            All <span class="purple">Movies</span>
+            All <span class="peru">Movies</span>
           </h2>
           <select id="filter" onchange="filterMovies(event)">
             <option value="" disabled selected>Sort</option>
             <option value="LOW_TO_HIGH">Price: Low to High</option>
             <option value="HIGH_TO_LOW">Price: High to Low</option>
-            <option value="ACTION">Genre: Action</option>
-            <option value="FAMILY">Genre: Family</option>
-            <option value="HOLIDAY">Genre: Holiday</option>
-            <option value="RATING">Rating</option>
+            <option value="A_to_Z">A to Z</option>            
           </select>
-           </div>
+          </div>
           <div class="movies">
             <i class="fa-solid fa-spinner movies__loading--spinner"></i>            
             </div>
