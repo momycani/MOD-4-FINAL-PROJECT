@@ -459,7 +459,7 @@ footer {
         padding: 0 24px;
         margin: auto;
         width: 100%;
-        padding: 8px 16px 0 16px;
+        padding: 8px 48px 0 48px;
     }
 
     .btn__menu{
@@ -473,6 +473,10 @@ footer {
     .row{
         flex-direction: column;
         text-align: center;
+        padding: 0 32px;
+    }
+
+    .movies__header{
         padding: 0 24px;
     }
     .movie{
@@ -529,6 +533,12 @@ footer {
 
         .header__img{
             width: 100%;
+        }
+
+        .movie__prices {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .browse-movies-cta {

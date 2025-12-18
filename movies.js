@@ -51,8 +51,8 @@ function renderMovies(movies) {
         </figure>
         <h3 class="movie__title">${movie.Title}</h3>
       <div class="movie__prices">
+            <span  class="movie__price--purchase">Purchase: $${prices.purchase}</span>
             <span>Rent: $${prices.rent}</span>
-            <span class="movie__price--purchase">Purchase: $${prices.purchase}</span>
           </div>
         </div>
       `;
