@@ -75,7 +75,7 @@ button:active{
 }
 
 .container{
-    padding: 56px 0;
+    padding: 24px 0;
 }
 
 .row{
@@ -456,7 +456,7 @@ footer {
         display: flex;
         justify-content: space-between;
         flex-direction: row;
-        padding: 0;
+        padding: 0 24px;
         margin: auto;
         width: 100%;
         padding: 8px 16px 0 16px;
@@ -500,10 +500,6 @@ footer {
 /* SMALL PHONES, LARGE SMARTPHONES */
 @media (max-width: 550px){
      
-        .container {
-            padding: 32px 0;
-        }
-        
         .btn__menu{
             display: block;            
         }   
