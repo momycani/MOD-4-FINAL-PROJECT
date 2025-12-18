@@ -452,6 +452,16 @@ footer {
         padding: 8px 16px 0 16px;
     }
 
+    .nav__container--movies{
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        padding: 0;
+        margin: auto;
+        width: 100%;
+        padding: 8px 16px 0 16px;
+    }
+
     .btn__menu{
         display: block;   
     }
@@ -490,6 +500,10 @@ footer {
 /* SMALL PHONES, LARGE SMARTPHONES */
 @media (max-width: 550px){
      
+        .container {
+            padding: 32px 0;
+        }
+        
         .btn__menu{
             display: block;            
         }   
