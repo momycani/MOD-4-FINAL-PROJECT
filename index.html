@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MODULE 4 FINAL PROJECT</title>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <script defer src="script.js"></script>  
+    <script defer src="movies.js"></script>  
     <script src="https://kit.fontawesome.com/46158079ac.js" crossorigin="anonymous"></script>
 
 </head>
@@ -37,13 +38,16 @@
         </nav>
 
         <header>
-      <div class="header__container">
+        <div class="header__container">
         <div class="header__description">
           <h1>America's <span class="peru">top</span> choice for movie reviews, purchase, and rentals.</h1>
           <h2>Discover a movie that matches your <span class="peru hover-wiggle">vibe.</span></h2>
-          <a href="movies.html" target="_blank">
-            <button class="btn">Browse movies</button>
-          </a>
+          <div class="header__search"><input type="text" class="header__search--input" placeholder="Search movies..."/>
+            <button type="button" class="header__btn" id="searchBtn"><span class="btn__iconwrap"><i class="fa-solid fa-magnifying-glass btn__icon is-visible" id="searchIcon"></i>
+              <i class="fa-solid fa-spinner fa-spin btn__icon" id="spinner"></i>
+              </span>
+            </button>
+          </div>
         </div>
         <figure class="header__img--wrapper">
           <img src="assets/undraw_home-cinema_jdm1.svg" alt="">
@@ -53,6 +57,14 @@
     </section> 
 
 <section id="features">
+  <div class="no-results hidden" id="noResults">
+  <h2>Could not find any matches related to your search.</h2>
+  <p>Please change the filter or reset it below.</p>
+  <button type="button" class="btn" id="resetFilterBtn">Reset filter</button>
+</div>
+
+<div class="movies"></div>
+
 <section id="holiday">
       <div class="container">
         <div class="row">

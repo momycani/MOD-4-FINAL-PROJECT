@@ -3,6 +3,114 @@ const API_KEY = 'fca438ff';
 let allMoviesData = null; 
 let currentMovies = [];
 
+document.addEventListener("DOMContentLoaded", () => {
+  const searchBtn = document.getElementById("searchBtn");
+  const spinner = document.getElementById("spinner");
+  const searchIcon = document.getElementById("searchIcon");
+  const searchInput = document.querySelector(".header__search--input");
+  const noResults = document.getElementById("noResults");
+  const resetBtn = document.getElementById("resetFilterBtn");
+  const moviesContainer = document.querySelector(".movies");
+
+  function showNoResults() {
+    noResults.classList.remove("hidden");
+    moviesContainer.classList.add("hidden");
+  }
+
+  function hideNoResults() {
+    noResults.classList.add("hidden");
+    moviesContainer.classList.remove("hidden");
+  }
+
+  // Map typed words to your categories
+  function normalizeQuery(q) {
+    const x = q.toLowerCase().trim();
+    if (x === "holiday" || x === "holidays" || x === "christmas" || x === "xmas") return "holiday";
+    if (x === "family" || x === "families") return "family";
+    if (x === "action" || x === "actions") return "action";
+    return "other";
+  }
+
+  async function runSearch() {
+    const query = searchInput.value;
+    const type = normalizeQuery(query);
+
+    // Only these 3 show movies
+    if (type === "other") {
+      showNoResults();
+      return;
+    }
+
+    hideNoResults();
+
+    // If you already loaded allMoviesData once, use it.
+    // Otherwise fetch now:
+    const allMovies = await fetchMovies();
+
+    if (type === "holiday") renderMovies(allMovies.christmasMovies);
+    if (type === "family") renderMovies(allMovies.familyMovies);
+    if (type === "action") renderMovies(allMovies.actionMovies);
+  }
+
+  // Button click
+  searchBtn.addEventListener("click", runSearch);
+
+  // Enter key
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      runSearch();
+    }
+  });
+
+  // Reset button: show all categories again
+  resetBtn.addEventListener("click", async () => {
+    searchInput.value = "";
+    hideNoResults();
+
+    const allMovies = await fetchMovies();
+    renderMovies([
+      ...allMovies.christmasMovies,
+      ...allMovies.familyMovies,
+      ...allMovies.actionMovies
+    ]);
+  });
+});
+
+  function showLoading(isLoading) {
+    searchIcon.classList.toggle("is-visible", !isLoading);
+    spinner.classList.toggle("is-visible", isLoading);
+    searchBtn.disabled = isLoading;
+  }
+
+  async function runSearch() {
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    showLoading(true);
+    try {
+      // If your fetchMovies DOES NOT accept query, change to: await fetchMovies();
+      await fetchMovies(query);
+
+      window.open("movies.html", "_blank");
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  // Button click
+  searchBtn.addEventListener("click", runSearch);
+
+  // Enter key
+  if (searchInput) {
+    searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      runSearch();
+    }
+  });
+}
+
 
 async function fetchMovies() {
     const urls = [
@@ -26,7 +134,7 @@ async function fetchMovies() {
     return allMovies;
 }
 
-const moviesContainer = document.querySelector(".movies");
+// const moviesContainer = document.querySelector(".movies");
 
 function renderMovies(movies) {
   moviesContainer.innerHTML = movies
@@ -65,8 +173,7 @@ async function openMovieModal(imdbID) {
     `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
   );
   const movie = await res.json();
-
-  }
+}
 
 async function init() {
   allMoviesData = await fetchMovies();
@@ -414,4 +521,3 @@ const actionMovies = [
 // "Poster": "https://m.media-amazon.com/images/M/MV5BZjQwNjUxZjUtYmUxOS00YmRjLTljZTgtMTc0OTFlZDllZjM5XkEyXkFqcGc@._V1_SX300.jpg"
 // }
 ];
-
