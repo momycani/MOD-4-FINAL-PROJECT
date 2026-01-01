@@ -2,114 +2,112 @@ const API_KEY = 'fca438ff';
 
 let allMoviesData = null; 
 let currentMovies = [];
+let searchBtn;
+let searchInput;
+let spinner;
+let searchIcon;
+let noResults;
+let resetBtn;
+let moviesContainer;
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchBtn = document.getElementById("searchBtn");
-  const spinner = document.getElementById("spinner");
-  const searchIcon = document.getElementById("searchIcon");
   const searchInput = document.querySelector(".header__search--input");
+  const spinner = document.getElementById("spinner");
+  const searchIcon = document.getElementById("searchIcon");  
   const noResults = document.getElementById("noResults");
   const resetBtn = document.getElementById("resetFilterBtn");
-  const moviesContainer = document.querySelector(".movies");
+  const moviesContainer = document.getElementById("moviesResults");
+
+  // init();
+
+  // console.log("DOM loaded, searchBtn:", searchBtn, "searchInput:", searchInput, "moviesContainer:", moviesContainer);
+
+  if (!searchBtn || !searchInput || !moviesContainer) return;
 
   function showNoResults() {
-    noResults.classList.remove("hidden");
+    noResults?.classList.remove("hidden");
     moviesContainer.classList.add("hidden");
   }
 
   function hideNoResults() {
-    noResults.classList.add("hidden");
+    noResults?.classList.add("hidden");
     moviesContainer.classList.remove("hidden");
   }
-
-  // Map typed words to your categories
+  
   function normalizeQuery(q) {
     const x = q.toLowerCase().trim();
-    if (x === "holiday" || x === "holidays" || x === "christmas" || x === "xmas") return "holiday";
-    if (x === "family" || x === "families") return "family";
-    if (x === "action" || x === "actions") return "action";
+    if (["holiday", "holidays", "christmas", "xmas"].includes(x)) return "holiday";
+    if (["family", "families"].includes(x)) return "family";
+    if (["action", "actions"].includes(x)) return "action";
     return "other";
   }
 
-  async function runSearch() {
-    const query = searchInput.value;
-    const type = normalizeQuery(query);
+  function showLoading(isLoading) {
+    if (!spinner || !searchIcon) return;
+    searchIcon.classList.toggle("is-visible", !isLoading);
+    spinner.classList.toggle("is-visible", isLoading);
+    searchBtn.disabled = isLoading;
+  }
 
-    // Only these 3 show movies
+  async function runSearch() {  
+    // console.log("runSearch fired:", searchInput.value);
+    
+    const type = normalizeQuery(searchInput.value);
+
     if (type === "other") {
       showNoResults();
       return;
     }
 
     hideNoResults();
+    showLoading(true);
 
-    // If you already loaded allMoviesData once, use it.
-    // Otherwise fetch now:
-    const allMovies = await fetchMovies();
+    try {
+      if (!allMoviesData) {
+        allMoviesData = await fetchMovies();           
+      }
 
-    if (type === "holiday") renderMovies(allMovies.christmasMovies);
-    if (type === "family") renderMovies(allMovies.familyMovies);
-    if (type === "action") renderMovies(allMovies.actionMovies);
+      if (type === "holiday") renderMovies(allMoviesData.christmasMovies);
+      if (type === "family") renderMovies(allMoviesData.familyMovies);
+      if (type === "action") renderMovies(allMoviesData.actionMovies);
+    } finally {
+      showLoading(false);
+    }
   }
 
-  // Button click
   searchBtn.addEventListener("click", runSearch);
-
-  // Enter key
+  
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       runSearch();
     }
   });
-
-  // Reset button: show all categories again
-  resetBtn.addEventListener("click", async () => {
+  
+  resetBtn?.addEventListener("click", async () => {
     searchInput.value = "";
     hideNoResults();
 
-    const allMovies = await fetchMovies();
-    renderMovies([
-      ...allMovies.christmasMovies,
-      ...allMovies.familyMovies,
-      ...allMovies.actionMovies
-    ]);
+  if (!allMoviesData) allMoviesData = await fetchMovies(); 
+    
+    currentMovies = [
+      ...allMoviesData.christmasMovies,
+      ...allMoviesData.familyMovies,
+      ...allMoviesData.actionMovies
+    ];
+     renderMovies(currentMovies);
+  });
+
+  moviesContainer.addEventListener("click", (event) => {
+    const movieElement = event.target.closest(".movie"); 
+    if (!movieElement) return;
+
+    const imdbID = movieElement.getAttribute("data-imdbid"); 
+    openMovieModal(imdbID);
   });
 });
 
-  function showLoading(isLoading) {
-    searchIcon.classList.toggle("is-visible", !isLoading);
-    spinner.classList.toggle("is-visible", isLoading);
-    searchBtn.disabled = isLoading;
-  }
-
-  async function runSearch() {
-    const query = searchInput.value.trim();
-    if (!query) return;
-
-    showLoading(true);
-    try {
-      // If your fetchMovies DOES NOT accept query, change to: await fetchMovies();
-      await fetchMovies(query);
-
-      window.open("movies.html", "_blank");
-    } finally {
-      showLoading(false);
-    }
-  }
-
-  // Button click
-  searchBtn.addEventListener("click", runSearch);
-
-  // Enter key
-  if (searchInput) {
-    searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      runSearch();
-    }
-  });
-}
 
 
 async function fetchMovies() {
@@ -134,96 +132,8 @@ async function fetchMovies() {
     return allMovies;
 }
 
-// const moviesContainer = document.querySelector(".movies");
-
-function renderMovies(movies) {
-  moviesContainer.innerHTML = movies
-    .map(movie => {
-     const meta = movieMeta[movie.imdbID] || {};
-      const group = meta.priceGroup || DEFAULT_PRICE_GROUP;
-      const prices = PRICE_GROUPS[group];
-
-      const poster =
-        movie.Poster && movie.Poster !== "N/A"
-          ? movie.Poster
-          : "assets/no-image.png";
-          
-      return `
-      <div class="movie" data-imdbid="${movie.imdbID}">
-        <figure class="movie__img--wrapper">
-          <img 
-            class="movie__img"
-            src="${poster}"
-            alt="${movie.Title}"
-          />
-        </figure>
-        <h3 class="movie__title">${movie.Title}</h3>
-      <div class="movie__prices">
-            <span  class="movie__price--purchase">Purchase: $${prices.purchase}</span>
-            <span>Rent: $${prices.rent}</span>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-}
-
-async function openMovieModal(imdbID) {
-  const res = await fetch(
-    `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
-  );
-  const movie = await res.json();
-}
-
-async function init() {
-  allMoviesData = await fetchMovies();
-  initializeMovies();  
-}
-
-init();
-
-function initializeMovies(filter) {
-    if (!allMoviesData) return;
-
-    currentMovies = [
-      ...allMoviesData.christmasMovies,
-      ...allMoviesData.familyMovies,
-      ...allMoviesData.actionMovies
-    ];
-    renderMovies(currentMovies);    
-    }
-
-moviesContainer.addEventListener("click", (event) => {
-  const movieElement = event.target.closest(".movie"); 
-  if (!movieElement) return;
-
-  const imdbID = movieElement.getAttribute("data-imdbid"); 
-  openMovieModal(imdbID);
-});
-
-function filterMovies(event) {
-  const value = event.target.value;
-  initializeMovies(value);
-
-  if (value === "LOW_TO_HIGH" || value === "HIGH_TO_LOW") {
-    sortByPrice(value);
-    return;
-  }
-
-  if (value === "A_to_Z") {
-    sortAZ();
-    return;
-  }
-}
-
-
-function priceHTML(purchasePrice, rentPrice) {
-  if (!rentPrice) {
-    return `$${purchasePrice.toFixed(2)}`;
-  } else {
-    return `<span class="movie__price--purchase">$${purchasePrice.toFixed(2)}</span>$${rentPrice.toFixed(2)}`;
-  }
-}
+// const group = meta.priceGroup || DEFAULT_PRICE_GROUP;
+const DEFAULT_PRICE_GROUP = "MEDIUM";
 
 const PRICE_GROUPS = {
   LOW:    { rent: "3.95", purchase: "18.95" },
@@ -267,6 +177,90 @@ const movieMeta = {
   tt0318155: { priceGroup: "LOW" }
 };
 
+function renderMovies(movies) {
+  if (!moviesContainer) return;
+
+  moviesContainer.innerHTML = movies
+    .map(movie => {
+      const meta = movieMeta[movie.imdbID] || {};
+      const group = meta.priceGroup || DEFAULT_PRICE_GROUP;
+      const prices = PRICE_GROUPS[group] || PRICE_GROUPS[DEFAULT_PRICE_GROUP];
+
+      const poster =
+        movie.Poster && movie.Poster !== "N/A"
+          ? movie.Poster
+          : "assets/no-image.png";
+
+      return `
+        <div class="movie" data-imdbid="${movie.imdbID}">
+          <figure class="movie__img--wrapper">
+            <img class="movie__img" src="${poster}" alt="${movie.Title}" />
+          </figure>
+          <h3 class="movie__title">${movie.Title}</h3>
+          <div class="movie__prices">
+            <span class="movie__price--purchase">Purchase: $${prices.purchase}</span>
+            <span>Rent: $${prices.rent}</span>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+
+async function openMovieModal(imdbID) {
+  const res = await fetch(
+    `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
+  );
+  const movie = await res.json();
+}
+
+async function init() {
+  allMoviesData = await fetchMovies();
+  initializeMovies();  
+}
+
+
+
+async function initializeMovies(filter) {
+    if (!allMoviesData) allMoviesData = await fetchMovies();
+
+    currentMovies = [
+      ...allMoviesData.christmasMovies,
+      ...allMoviesData.familyMovies,
+      ...allMoviesData.actionMovies
+    ];
+    renderMovies(currentMovies);    
+  }
+
+function filterMovies(event) {
+  const value = event.target.value;
+  initializeMovies(value);
+
+  if (value === "LOW_TO_HIGH" || value === "HIGH_TO_LOW") {
+    sortByPrice(value);
+    return;
+  }
+
+  if (value === "A_to_Z") {
+    sortAZ();
+    return;
+  }
+}
+
+
+function priceHTML(purchasePrice, rentPrice) {
+  if (!rentPrice) {
+    return `$${purchasePrice.toFixed(2)}`;
+  } else {
+    return `<span class="movie__price--purchase">$${purchasePrice.toFixed(2)}</span>$${rentPrice.toFixed(2)}`;
+  }
+}
+
+
+
+
+
 function sortByPrice(order) {
   const sorted = [...currentMovies].sort((a, b) => {
     const metaA = movieMeta[a.imdbID] || {};
@@ -290,6 +284,7 @@ function sortAZ() {
 
   renderMovies(sorted);
 }
+
 
 
 /* CHRISTMAS */
