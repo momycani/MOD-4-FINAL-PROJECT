@@ -11,29 +11,42 @@ let resetBtn;
 let moviesContainer;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const searchBtn = document.getElementById("searchBtn");
-  const searchInput = document.querySelector(".header__search--input");
-  const spinner = document.getElementById("spinner");
-  const searchIcon = document.getElementById("searchIcon");  
-  const noResults = document.getElementById("noResults");
-  const resetBtn = document.getElementById("resetFilterBtn");
-  const moviesContainer = document.getElementById("moviesResults");
+  const isHomePage = !!document.getElementById("searchBtn");
+  const isMoviesPage = !!document.getElementById("moviesList");
 
-  // init();
-
-  // console.log("DOM loaded, searchBtn:", searchBtn, "searchInput:", searchInput, "moviesContainer:", moviesContainer);
-
-  if (!searchBtn || !searchInput || !moviesContainer) return;
-
-  function showNoResults() {
-    noResults?.classList.remove("hidden");
-    moviesContainer.classList.add("hidden");
+  // MOVIES PAGE: render results here
+  if (isMoviesPage) {
+    moviesContainer = document.getElementById("moviesList");
+    initializeMovies();
+    return;
   }
 
-  function hideNoResults() {
-    noResults?.classList.add("hidden");
-    moviesContainer.classList.remove("hidden");
+  // HOME PAGE: only save category + open new tab
+  if (isHomePage) {
+    moviesContainer = document.getElementById("moviesResults"); // only used to show/hide "no results" if you want
+    setupHomeSearch();
   }
+}); 
+
+  function setupHomeSearch() {
+  searchBtn = document.getElementById("searchBtn");
+  searchInput = document.querySelector(".header__search--input");
+  // spinner = document.getElementById("spinner");
+  // searchIcon = document.getElementById("searchIcon");  
+  // noResults = document.getElementById("noResults");
+  // resetBtn = document.getElementById("resetFilterBtn");
+
+  // if (!searchBtn || !searchInput || !moviesContainer) return;
+
+  // function showNoResults() {
+  //   noResults?.classList.remove("hidden");
+  //   moviesContainer.classList.add("hidden");
+  // }
+
+  // function hideNoResults() {
+  //   noResults?.classList.add("hidden");
+  //   moviesContainer.classList.remove("hidden");
+  // }
   
   function normalizeQuery(q) {
     const x = q.toLowerCase().trim();
@@ -43,17 +56,19 @@ document.addEventListener("DOMContentLoaded", () => {
     return "other";
   }
 
-  function showLoading(isLoading) {
-    if (!spinner || !searchIcon) return;
-    searchIcon.classList.toggle("is-visible", !isLoading);
-    spinner.classList.toggle("is-visible", isLoading);
-    searchBtn.disabled = isLoading;
-  }
+  // function showLoading(isLoading) {
+  //   if (!spinner || !searchIcon) return;
+  //   searchIcon.classList.toggle("is-visible", !isLoading);
+  //   spinner.classList.toggle("is-visible", isLoading);
+  //   searchBtn.disabled = isLoading;
+  // }
 
-  async function runSearch() {  
-    // console.log("runSearch fired:", searchInput.value);
-    
+  async function runSearch() {        
     const type = normalizeQuery(searchInput.value);
+
+    localStorage.setItem("movieCategory", type);
+   
+    window.open('movies.html', '_blank');
 
     if (type === "other") {
       showNoResults();
@@ -61,16 +76,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     hideNoResults();
-    showLoading(true);
-
+    showLoading(true);    
+    
     try {
       if (!allMoviesData) {
         allMoviesData = await fetchMovies();           
       }
 
-      if (type === "holiday") renderMovies(allMoviesData.christmasMovies);
-      if (type === "family") renderMovies(allMoviesData.familyMovies);
-      if (type === "action") renderMovies(allMoviesData.actionMovies);
+      // if (type === "holiday") renderMovies(allMoviesData.christmasMovies);
+      // if (type === "family") renderMovies(allMoviesData.familyMovies);
+      // if (type === "action") renderMovies(allMoviesData.actionMovies);
+      
+      // document.getElementById("browseMoviesLink").click();
+
     } finally {
       showLoading(false);
     }
@@ -106,7 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const imdbID = movieElement.getAttribute("data-imdbid"); 
     openMovieModal(imdbID);
   });
-});
+}; 
+
+/* end DOM */
+
 
 
 
@@ -132,7 +153,6 @@ async function fetchMovies() {
     return allMovies;
 }
 
-// const group = meta.priceGroup || DEFAULT_PRICE_GROUP;
 const DEFAULT_PRICE_GROUP = "MEDIUM";
 
 const PRICE_GROUPS = {
@@ -222,14 +242,20 @@ async function init() {
 
 
 
-async function initializeMovies(filter) {
+async function initializeMovies() {
     if (!allMoviesData) allMoviesData = await fetchMovies();
 
-    currentMovies = [
-      ...allMoviesData.christmasMovies,
-      ...allMoviesData.familyMovies,
-      ...allMoviesData.actionMovies
-    ];
+  const type = localStorage.getItem("movieCategory") || "all";
+
+  if (type === "holiday") currentMovies = allMoviesData.christmasMovies;
+  else if (type === "family") currentMovies = allMoviesData.familyMovies;
+  else if (type === "action") currentMovies = allMoviesData.actionMovies;
+  else currentMovies = [
+    ...allMoviesData.christmasMovies,
+    ...allMoviesData.familyMovies,
+    ...allMoviesData.actionMovies
+  ];
+
     renderMovies(currentMovies);    
   }
 
@@ -256,10 +282,6 @@ function priceHTML(purchasePrice, rentPrice) {
     return `<span class="movie__price--purchase">$${purchasePrice.toFixed(2)}</span>$${rentPrice.toFixed(2)}`;
   }
 }
-
-
-
-
 
 function sortByPrice(order) {
   const sorted = [...currentMovies].sort((a, b) => {

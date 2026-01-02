@@ -454,7 +454,7 @@ header {
 }
 
 .no-results .btn{
-  background: #5a2ea6; /* purple-ish like your screenshot */
+  background: peru; 
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -462,8 +462,19 @@ header {
   cursor: pointer;
 }
 .no-results .btn:hover{
-  background: #7b3ff2; /* lighter purple on hover */
+  background: orange; 
 }
+
+/* .browse-btn{
+    background-color: peru;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 16px 32px;
+    font-size: 20px;
+    font-weight: 500;
+    transition: 300ms ease;
+    } */
 
 /* 
 
@@ -601,7 +612,7 @@ footer {
         margin-top: 20px;
         padding: 16px;
     }
-}
+  }
 
 /* SMALL PHONES, LARGE SMARTPHONES */
 @media (max-width: 550px){
