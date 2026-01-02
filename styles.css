@@ -271,11 +271,11 @@ header {
 
 .hover-wiggle:hover {
    display: inline-block;
-  animation: wiggle 0.5s ease-in-out infinite;
+   animation: wiggle 0.5s ease-in-out infinite;
 }
 
 @keyframes wiggle {
-    0%   { transform: rotate(0deg) translateX(0); }
+  0%   { transform: rotate(0deg) translateX(0); }
   25%  { transform: rotate(3deg) translateX(2px); }
   50%  { transform: rotate(0deg) translateX(0); }
   75%  { transform: rotate(-3deg) translateX(-2px); }
@@ -308,7 +308,7 @@ header {
   background-color: peru;
   border: none;
   font-size: 20px;
-  color: black;
+  color: white;
   cursor: pointer;
   border-radius: 30px;
   padding: 8px 16px;
@@ -316,7 +316,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   }
 
 .header__btn:hover {
@@ -362,6 +361,110 @@ header {
   margin: 0 auto;  
   height: auto;
 }
+
+/* both states live inside the same pill */
+#searchBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* normal + error state should fill the pill */
+.search__normal,
+.search__error {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.search__errorText {
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.header__search-area {
+  width: 100%;
+  max-width: 500px;
+}
+
+.header__search-error {
+  width: 100%;
+  padding: 24px;
+  border-radius: 30px;
+  background-color: #f7f5f5;
+  display: flex;
+  /* flex-direction: column; */
+  gap: 12px;
+  align-items: center;
+  /* text-align: center; */
+  justify-content: space-between;
+}
+
+.search-error__text {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.85;
+  text-align: left;
+}
+
+.search-error__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  justify-content: flex-end
+}
+
+/* Optional: small button variants */
+.btn--small {
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 999px;
+}
+
+.btn--outline {
+  background: transparent;
+  border: 2px solid peru;
+  color: peru;
+}
+
+.btn--outline:hover {
+  background: rgba(205, 133, 63, 0.12); /* light peru tint */
+  text-decoration: none;
+}
+
+.movies-empty {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  gap: 16px;
+}
+
+.movies-empty__img {
+  max-width: 320px;
+  margin-bottom: 16px;
+}
+
+.movies-empty h2 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.movies-empty p {
+  opacity: 0.8;
+}
+
+.movies-empty .btn {
+  margin-top: 12px;
+}
+
 
 /* MOVIES */
 
@@ -436,7 +539,7 @@ header {
   margin-bottom: 8px;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 .no-results{
   text-align: center;
@@ -465,7 +568,7 @@ header {
   background: orange; 
 }
 
-/* .browse-btn{
+.browse-btn{
     background-color: peru;
     color: white;
     border: none;
@@ -474,7 +577,7 @@ header {
     font-size: 20px;
     font-weight: 500;
     transition: 300ms ease;
-    } */
+    }
 
 /* 
 
