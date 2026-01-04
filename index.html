@@ -6,8 +6,7 @@
     <title>MODULE 4 FINAL PROJECT</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/46158079ac.js" crossorigin="anonymous"></script>
-    <script defer src="script.js"></script>  
-    <script defer src="movies.js"></script>      
+    <script defer src="script.js"></script>        
 
 </head>
 
@@ -43,24 +42,18 @@
           <h1>America's <span class="peru">top</span> choice for movie reviews, purchase, and rentals.</h1>
           <h2>Discover a movie that matches your <span class="peru hover-wiggle">vibe.</span></h2>
         <div class="header__search-area">
-  <!-- NORMAL SEARCH -->
+  
   <div class="header__search" id="searchNormal">
-    <input
-      type="text"
-      class="header__search--input"
-      id="searchInput"
-      placeholder="Search movies..."
-    />
+    <input type="text" class="header__search--input" id="searchInput" placeholder="Search movies..."/>
     <button type="button" class="header__btn" id="searchBtn">
       <span class="btn__iconwrap">
         <i class="fa-solid fa-magnifying-glass btn__icon is-visible" id="searchIcon"></i>
-        <i class="fa-solid fa-spinner fa-spin btn__icon" id="spinner"></i>
+        <i class="fa-solid fa-spinner movies__loading--spinner" id="spinner"></i>
       </span>
     </button>
   </div>
 
-  <!-- ERROR STATE (replaces the search bar area) -->
-  <div class="header__search-error hidden" id="searchError">
+   <div class="header__search-error hidden" id="searchError">
     <p class="search-error__text">Could not find any matches.</p>
 
     <div class="search-error__actions">
@@ -258,7 +251,8 @@
     </section>
 <section id="browse-movies-cta">
   <div class="container browse-movies-cta">
-    <a href="movies.html" target="_blank" id="browseMoviesLink" onclick="localStorage.setItem('movieCategory', 'all')">
+    <a href="movies.html" target="_blank" 
+      onclick="localStorage.setItem('moviesMode', 'browse'); localStorage.removeItem('movieQuery');">
             <button class="btn">Browse movies</button>
           </a>
           </div>

@@ -1,134 +1,17 @@
-const API_KEY = 'fca438ff';
+const API_KEY = "fca438ff";
 
-let allMoviesData = null; 
 let currentMovies = [];
 let moviesContainer = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-  const isMoviesPage = !!document.getElementById("moviesList");
-  const isHomePage = !!document.getElementById("searchBtn");
-
-  if (isMoviesPage) {
-    moviesContainer = document.getElementById("moviesList");
-    initializeMovies(); 
-    return;
-  }
-
-  if (isHomePage) {
-    setupHomeSearch(); 
-  }
-});
-
-function setupHomeSearch() {
-  const searchBtn = document.getElementById("searchBtn");
-  const searchInput = document.getElementById("searchInput");
-  const spinner = document.getElementById("spinner");
-  const searchIcon = document.getElementById("searchIcon");
-
-  const searchNormal = document.getElementById("searchNormal");
-  const searchError = document.getElementById("searchError");
-  const tryAgainBtn = document.getElementById("tryAgainBtn");
-  const resetBtnHeader = document.getElementById("resetFilterBtnHeader");
-
-  if (!searchBtn || !searchInput || !searchNormal || !searchError) return;
-
-  function showLoading(isLoading) {
-    searchIcon?.classList.toggle("is-visible", !isLoading);
-    spinner?.classList.toggle("is-visible", isLoading);
-    searchBtn.disabled = isLoading;
-  }
-
-  function showSearchError() {
-    searchNormal.classList.add("hidden");    
-    searchError.classList.remove("hidden");  
-  }
-
-  function hideSearchError() {
-    searchError.classList.add("hidden");
-    searchNormal.classList.remove("hidden");
-    searchInput.focus();
-  }
-
-  function normalizeQuery(q) {
-    const x = q.toLowerCase().trim();
-    if (["holiday", "holidays", "christmas", "xmas"].includes(x)) return "holiday";
-    if (["family", "families"].includes(x)) return "family";
-    if (["action", "actions"].includes(x)) return "action";
-    return "other";
-  }
-
-  async function runSearch() {
-    const type = normalizeQuery(searchInput.value);
-
-       if (type === "other") {
-      showSearchError();
-      return;
-    }
-
-    localStorage.setItem("movieCategory", type);
-
-    showLoading(true);
-    try {
-      window.open("movies.html", "_blank");
-    } finally {
-      showLoading(false);
-    }
-  }
-
-  searchBtn.addEventListener("click", runSearch);
-
-  searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      runSearch();
-    }
-  });
-
-  searchInput.addEventListener("input", hideSearchError);
-  tryAgainBtn?.addEventListener("click", hideSearchError);
-
-  resetBtnHeader?.addEventListener("click", () => {
-    localStorage.setItem("movieCategory", "all");
-    searchInput.value = "";
-    hideSearchError();
-  });
-}
- 
- 
-/* end DOM */
-async function fetchMovies() {
-    const urls = [
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=christmas`,
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=family`,
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=action`
-    ];
-    const response = await Promise.all(
-        urls.map(url => fetch(url))
-    );
-
-    const data = await Promise.all(
-        response.map(res => res.json())
-    );
-    const allMovies = {
-        christmasMovies: data[0].Search || [],
-        familyMovies: data[1].Search || [],
-        actionMovies: data[2].Search || []
-    };
-
-    return allMovies;
-}
-
+// pricing tables you already have:
 const DEFAULT_PRICE_GROUP = "MEDIUM";
-
 const PRICE_GROUPS = {
-  LOW:    { rent: "3.95", purchase: "18.95" },
+  LOW: { rent: "3.95", purchase: "18.95" },
   MEDIUM: { rent: "4.95", purchase: "19.95" },
-  HIGH:   { rent: "5.95", purchase: "20.95" },
-  PREMIUM:{ rent: "6.95", purchase: "21.95" }
+  HIGH: { rent: "5.95", purchase: "20.95" },
+  PREMIUM: { rent: "6.95", purchase: "21.95" },
 };
-
-const movieMeta = {
-  tt0107688: { priceGroup: "MEDIUM" },
+const movieMeta = {   tt0107688: { priceGroup: "MEDIUM" },
   tt1711525: { priceGroup: "MEDIUM" },
   tt8623904: { priceGroup: "MEDIUM" },
   tt2990140: { priceGroup: "HIGH" },
@@ -160,13 +43,92 @@ const movieMeta = {
   tt0094612: { priceGroup: "LOW" },
   tt0120633: { priceGroup: "LOW" },
   tt0318155: { priceGroup: "LOW" }
-};
+ };
 
+// --- UI helpers (movies page) ---
+function showLoading(isLoading) {
+  const spinnerEl = document.querySelector(".movies__loading--spinner");
+  spinnerEl?.classList.toggle("is-visible", isLoading);
+}
+
+function showEmptyState(show) {
+  const emptyState = document.getElementById("moviesEmptyState");
+  const moviesList = document.getElementById("moviesList");
+
+  if (!emptyState || !moviesList) return;
+
+  if (show) {
+    emptyState.classList.remove("hidden");
+    moviesList.classList.add("hidden");
+  } else {
+    emptyState.classList.add("hidden");
+    moviesList.classList.remove("hidden");
+  }
+}
+
+function nextFrame() {
+  return new Promise(requestAnimationFrame);
+}
+
+async function initializeMoviesPage() {
+  const mode = localStorage.getItem("moviesMode") || "browse";
+
+  showLoading(true);
+  await nextFrame();
+
+  try {
+    if (mode === "browse") {
+      const queries = ["christmas", "family", "action"];
+      console.log("BROWSE MODE QUERIES:", queries); // 👈 check this in console
+
+      const results = await Promise.all(queries.map(q => fetchMovies(q)));
+      const combined = results.flat();
+
+      // optional: remove duplicates by imdbID (sometimes lists overlap)
+      const unique = Array.from(new Map(combined.map(m => [m.imdbID, m])).values());
+
+      currentMovies = unique;
+      showEmptyState(unique.length === 0);
+      renderMovies(currentMovies);
+      return;
+    }
+
+    // SEARCH MODE
+    const movies = await fetchMoviesFromSearch();
+    currentMovies = movies;
+
+    showEmptyState(movies.length === 0);
+    renderMovies(currentMovies);
+
+  } catch (e) {
+    console.error(e);
+    showEmptyState(true);
+  } finally {
+    showLoading(false);
+  }
+}
+
+// --- data fetch ---
+async function fetchMoviesFromSearch() {
+  const query = (localStorage.getItem("movieQuery") || "").trim().toLowerCase();
+  if (!query) return [];
+  return fetchMovies(query);
+} 
+
+//   const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(finalQuery)}`;
+//   const res = await fetch(url);
+//   const data = await res.json();
+
+//   if (data.Response === "False") return [];
+//   return data.Search || [];
+// }
+
+// --- render ---
 function renderMovies(movies) {
   if (!moviesContainer) return;
 
   moviesContainer.innerHTML = movies
-    .map(movie => {
+    .map((movie) => {
       const meta = movieMeta[movie.imdbID] || {};
       const group = meta.priceGroup || DEFAULT_PRICE_GROUP;
       const prices = PRICE_GROUPS[group] || PRICE_GROUPS[DEFAULT_PRICE_GROUP];
@@ -192,107 +154,96 @@ function renderMovies(movies) {
     .join("");
 }
 
+// --- init movies page ---
+async function initializeMoviesPage() {
+  const mode = localStorage.getItem("moviesMode") || "browse";
 
-async function openMovieModal(imdbID) {
-  const res = await fetch(
-    `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
-  );
-  const movie = await res.json();
-}
+  showLoading(true);
+  await nextFrame(); // forces spinner to paint before fetch/render
 
-async function init() {
-  allMoviesData = await fetchMovies();
-  initializeMovies();  
-}
+  try {
+    if (mode === "browse") {
 
-async function initializeMovies() {
-  if (!allMoviesData) allMoviesData = await fetchMovies();
+      const queries = ["christmas", "family", "action"];
+      const results = await Promise.all(queries.map(q => fetchMoviesFromSearch(q)));
+      currentMovies = results.flat();
+      showEmptyState(false);
+      renderMovies(currentMovies);
+      return;
+    }
 
-  const type = localStorage.getItem("movieCategory") || "all";
+    const movies = await fetchMoviesFromSearch();
+    currentMovies = movies;
 
-  const emptyState = document.getElementById("moviesEmptyState");
-  const moviesList = document.getElementById("moviesList");
+    if (!movies.length) {
+      renderMovies([]);
+      showEmptyState(true);
+      return;
+    }
 
-  const emptyResetBtn = document.getElementById("emptyResetBtn");
-  if (emptyResetBtn && !emptyResetBtn.dataset.bound) {
-    emptyResetBtn.dataset.bound = "true";
-    emptyResetBtn.addEventListener("click", () => {
-      localStorage.setItem("movieCategory", "all");
-      initializeMovies();
-    });
-  }
-
-  if (type === "holiday") currentMovies = allMoviesData.christmasMovies;
-  else if (type === "family") currentMovies = allMoviesData.familyMovies;
-  else if (type === "action") currentMovies = allMoviesData.actionMovies;
-  else currentMovies = [
-    ...allMoviesData.christmasMovies,
-    ...allMoviesData.familyMovies,
-    ...allMoviesData.actionMovies
-  ];
-
-  if (!currentMovies.length && emptyState && moviesList) {
-    moviesList.classList.add("hidden");
-    emptyState.classList.remove("hidden");
-    return;
-  }
-
-  if (emptyState && moviesList) {
-    emptyState.classList.add("hidden");
-    moviesList.classList.remove("hidden");
-  }
-
-  renderMovies(currentMovies);
-}
-
-function filterMovies(event) {
-  const value = event.target.value;
-  initializeMovies(value);
-
-  if (value === "LOW_TO_HIGH" || value === "HIGH_TO_LOW") {
-    sortByPrice(value);
-    return;
-  }
-
-  if (value === "A_to_Z") {
-    sortAZ();
-    return;
+    showEmptyState(false);
+    renderMovies(currentMovies);
+  } catch (e) {
+    console.error(e);
+    showEmptyState(true);
+  } finally {
+    showLoading(false);
   }
 }
 
-
-function priceHTML(purchasePrice, rentPrice) {
-  if (!rentPrice) {
-    return `$${purchasePrice.toFixed(2)}`;
-  } else {
-    return `<span class="movie__price--purchase">$${purchasePrice.toFixed(2)}</span>$${rentPrice.toFixed(2)}`;
-  }
+async function fetchMovies(query) {
+  const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.Response === "False" ? [] : (data.Search || []);
 }
 
+
+// --- sorting ---
 function sortByPrice(order) {
   const sorted = [...currentMovies].sort((a, b) => {
     const metaA = movieMeta[a.imdbID] || {};
     const metaB = movieMeta[b.imdbID] || {};
 
-    const priceA = Number(PRICE_GROUPS[metaA.priceGroup]?.purchase);
-    const priceB = Number(PRICE_GROUPS[metaB.priceGroup]?.purchase);
+    const priceA = Number(PRICE_GROUPS[metaA.priceGroup || DEFAULT_PRICE_GROUP]?.purchase);
+    const priceB = Number(PRICE_GROUPS[metaB.priceGroup || DEFAULT_PRICE_GROUP]?.purchase);
 
-    return order === "LOW_TO_HIGH"
-      ? priceA - priceB
-      : priceB - priceA;
+    return order === "LOW_TO_HIGH" ? priceA - priceB : priceB - priceA;
   });
 
   renderMovies(sorted);
 }
 
 function sortAZ() {
-  const sorted = [...currentMovies].sort((a, b) =>
-    a.Title.localeCompare(b.Title)
-  );
-
+  const sorted = [...currentMovies].sort((a, b) => a.Title.localeCompare(b.Title));
   renderMovies(sorted);
 }
 
+// HTML uses onchange="filterMovies(event)"
+function filterMovies(event) {
+  const value = event.target.value;
+
+  if (value === "LOW_TO_HIGH" || value === "HIGH_TO_LOW") return sortByPrice(value);
+  if (value === "A_to_Z") return sortAZ();
+}
+window.filterMovies = filterMovies;
+
+// --- DOMContentLoaded ---
+document.addEventListener("DOMContentLoaded", () => {
+  const isMoviesPage = !!document.getElementById("moviesList");
+  if (!isMoviesPage) return;
+
+  moviesContainer = document.getElementById("moviesList");
+
+  // empty reset button
+  const emptyResetBtn = document.getElementById("emptyResetBtn");
+  emptyResetBtn?.addEventListener("click", () => {
+    localStorage.removeItem("movieQuery");
+    window.location.href = "index.html";
+  });
+
+  initializeMoviesPage();
+});
 
 
 /* CHRISTMAS */
