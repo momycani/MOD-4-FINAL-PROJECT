@@ -44,37 +44,37 @@ function normalizeQuery(q) {
 }
 
   async function runSearch() {
-    const rawQuery = searchInput.value.trim();
-    const type = normalizeQuery(rawQuery);
+  const rawQuery = searchInput.value.trim();
+  const type = normalizeQuery(rawQuery);
 
-    if (type === "other") {
-      showSearchError();
-      localStorage.removeItem("movieQuery");
-      localStorage.removeItem("movieCategory");
-      return;
-    }
-
-    localStorage.setItem("movieCategory", type);
-
-    const queryForApi = type === "holiday" ? "christmas" :
-      type === "family" ? "family" :
-      type === "action" ? "action" : "";
-
-      // inside runSearch(), after you validate holiday/family/action
-    localStorage.setItem("moviesMode", "search");
-    localStorage.setItem("movieQuery", queryForApi); // christmas/family/action
-    window.open("movies.html", "_blank");
-
-
-    localStorage.setItem("movieQuery", queryForApi);
-    
-    showLoading(true);
-    try {
-      window.open("movies.html", "_blank");
-    } finally {
-      showLoading(false);
-    }
+  if (type === "other") {
+    showSearchError();
+    localStorage.removeItem("movieQuery");
+    localStorage.removeItem("movieCategory");
+    localStorage.removeItem("moviesMode");
+    return;
   }
+
+  const queryForApi =
+    type === "holiday" ? "christmas" :
+    type === "family"  ? "family" :
+    "action";
+
+  localStorage.setItem("moviesMode", "search");
+  localStorage.setItem("movieCategory", type);
+  localStorage.setItem("movieQuery", queryForApi);
+
+  showLoading(true);
+
+  await new Promise(requestAnimationFrame);
+
+  try {
+    window.open("movies.html", "_blank");
+  } finally {
+    showLoading(false);
+  }
+}
+
 
   searchBtn.addEventListener("click", runSearch);
 

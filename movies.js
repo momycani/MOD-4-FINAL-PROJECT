@@ -3,7 +3,6 @@ const API_KEY = "fca438ff";
 let currentMovies = [];
 let moviesContainer = null;
 
-// pricing tables you already have:
 const DEFAULT_PRICE_GROUP = "MEDIUM";
 const PRICE_GROUPS = {
   LOW: { rent: "3.95", purchase: "18.95" },
@@ -45,7 +44,6 @@ const movieMeta = {   tt0107688: { priceGroup: "MEDIUM" },
   tt0318155: { priceGroup: "LOW" }
  };
 
-// --- UI helpers (movies page) ---
 function showLoading(isLoading) {
   const spinnerEl = document.querySelector(".movies__loading--spinner");
   spinnerEl?.classList.toggle("is-visible", isLoading);
@@ -70,36 +68,47 @@ function nextFrame() {
   return new Promise(requestAnimationFrame);
 }
 
+async function fetchMovies(query) {
+  const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.Response === "False" ? [] : (data.Search || []);
+}
+
+async function fetchMoviesFromSearch() {
+  const query = (localStorage.getItem("movieQuery") || "").trim().toLowerCase();
+  if (!query) return [];
+  return fetchMovies(query);
+}
+
 async function initializeMoviesPage() {
   const mode = localStorage.getItem("moviesMode") || "browse";
 
   showLoading(true);
-  await nextFrame();
+  await nextFrame(); 
 
   try {
     if (mode === "browse") {
       const queries = ["christmas", "family", "action"];
-      console.log("BROWSE MODE QUERIES:", queries); // 👈 check this in console
+      console.log("BROWSE MODE QUERIES:", queries);
 
       const results = await Promise.all(queries.map(q => fetchMovies(q)));
       const combined = results.flat();
 
-      // optional: remove duplicates by imdbID (sometimes lists overlap)
       const unique = Array.from(new Map(combined.map(m => [m.imdbID, m])).values());
 
       currentMovies = unique;
+
       showEmptyState(unique.length === 0);
       renderMovies(currentMovies);
       return;
     }
 
-    // SEARCH MODE
     const movies = await fetchMoviesFromSearch();
     currentMovies = movies;
 
     showEmptyState(movies.length === 0);
     renderMovies(currentMovies);
-
   } catch (e) {
     console.error(e);
     showEmptyState(true);
@@ -108,22 +117,6 @@ async function initializeMoviesPage() {
   }
 }
 
-// --- data fetch ---
-async function fetchMoviesFromSearch() {
-  const query = (localStorage.getItem("movieQuery") || "").trim().toLowerCase();
-  if (!query) return [];
-  return fetchMovies(query);
-} 
-
-//   const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(finalQuery)}`;
-//   const res = await fetch(url);
-//   const data = await res.json();
-
-//   if (data.Response === "False") return [];
-//   return data.Search || [];
-// }
-
-// --- render ---
 function renderMovies(movies) {
   if (!moviesContainer) return;
 
@@ -154,52 +147,6 @@ function renderMovies(movies) {
     .join("");
 }
 
-// --- init movies page ---
-async function initializeMoviesPage() {
-  const mode = localStorage.getItem("moviesMode") || "browse";
-
-  showLoading(true);
-  await nextFrame(); // forces spinner to paint before fetch/render
-
-  try {
-    if (mode === "browse") {
-
-      const queries = ["christmas", "family", "action"];
-      const results = await Promise.all(queries.map(q => fetchMoviesFromSearch(q)));
-      currentMovies = results.flat();
-      showEmptyState(false);
-      renderMovies(currentMovies);
-      return;
-    }
-
-    const movies = await fetchMoviesFromSearch();
-    currentMovies = movies;
-
-    if (!movies.length) {
-      renderMovies([]);
-      showEmptyState(true);
-      return;
-    }
-
-    showEmptyState(false);
-    renderMovies(currentMovies);
-  } catch (e) {
-    console.error(e);
-    showEmptyState(true);
-  } finally {
-    showLoading(false);
-  }
-}
-
-async function fetchMovies(query) {
-  const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data.Response === "False" ? [] : (data.Search || []);
-}
-
-
-// --- sorting ---
 function sortByPrice(order) {
   const sorted = [...currentMovies].sort((a, b) => {
     const metaA = movieMeta[a.imdbID] || {};
@@ -219,7 +166,6 @@ function sortAZ() {
   renderMovies(sorted);
 }
 
-// HTML uses onchange="filterMovies(event)"
 function filterMovies(event) {
   const value = event.target.value;
 
@@ -228,14 +174,12 @@ function filterMovies(event) {
 }
 window.filterMovies = filterMovies;
 
-// --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", () => {
   const isMoviesPage = !!document.getElementById("moviesList");
   if (!isMoviesPage) return;
 
   moviesContainer = document.getElementById("moviesList");
 
-  // empty reset button
   const emptyResetBtn = document.getElementById("emptyResetBtn");
   emptyResetBtn?.addEventListener("click", () => {
     localStorage.removeItem("movieQuery");
